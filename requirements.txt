@@ -1,0 +1,8 @@
+streamlit
+pandas
+Pillow
+pytesseract
+groq
+python-dotenv
+reportlab
+rapidfuzz
