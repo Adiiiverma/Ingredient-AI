@@ -218,20 +218,20 @@ if uploaded_file:
             st.text(text)
             text = text.strip()
 
-            if len(text) < 80:
-                st.error("❌ Unable to recognize the ingredients properly.")
-                st.info("""
-            📷 Please upload a clear image that:\n
-            • Shows ONLY the ingredients lis\n
-            • Is well lit\n
-            • Is not blurry\n
-            • Is not tilted\n
-            • Contains readable text\n
-            """)
-                st.stop()
-            st.subheader("Extracted Text")
+          #  if len(text) < 80:
+          #      st.error("❌ Unable to recognize the ingredients properly.")
+          #      st.info("""
+          #  📷 Please upload a clear image that:\n
+          #  • Shows ONLY the ingredients lis\n
+          #  • Is well lit\n
+          #  • Is not blurry\n
+          #  • Is not tilted\n
+          #  • Contains readable text\n
+          #  """)
+          #      st.stop()
+          #  st.subheader("Extracted Text")
 
-            st.text(text)
+          #  st.text(text)
 
             # -------- INGREDIENT LIST -------- #
 
