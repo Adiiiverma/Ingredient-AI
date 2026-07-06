@@ -5,4 +5,4 @@ groq
 python-dotenv
 reportlab
 rapidfuzz
-requests
+pytesseract
