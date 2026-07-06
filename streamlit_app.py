@@ -214,6 +214,8 @@ if uploaded_file:
             # -------- OCR -------- #
 
             text = extract_text_with_ocr_space(image)
+            st.write("OCR Output")
+            st.text(text)
             text = text.strip()
 
             if len(text) < 80:
@@ -227,7 +229,6 @@ if uploaded_file:
             • Contains readable text\n
             """)
                 st.stop()
-
             st.subheader("Extracted Text")
 
             st.text(text)
