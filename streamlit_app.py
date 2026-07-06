@@ -2,8 +2,9 @@ import streamlit as st
 import pandas as pd
 import os
 import json
+import requests
+import io
 from PIL import Image
-import pytesseract
 from reports.pdf_report import generate_pdf
 from utils.groq_ai import (
     extract_ingredients_with_ai,
@@ -12,9 +13,34 @@ from utils.groq_ai import (
 )
 from utils.database import IngredientDatabase
 
-pytesseract.pytesseract.tesseract_cmd = (
-    r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-)
+def extract_text_with_ocr_space(image):
+    api_key = st.secrets["OCR_SPACE_API_KEY"]
+
+    img_bytes = io.BytesIO()
+    image.save(img_bytes, format="PNG")
+    img_bytes.seek(0)
+
+    response = requests.post(
+        "https://api.ocr.space/parse/image",
+        files={"filename": ("image.png", img_bytes, "image/png")},
+        data={
+            "apikey": api_key,
+            "language": "eng",
+            "isOverlayRequired": False,
+        },
+    )
+
+    result = response.json()
+
+    if result.get("IsErroredOnProcessing"):
+        return ""
+
+    parsed = result.get("ParsedResults")
+
+    if not parsed:
+        return ""
+
+    return parsed[0]["ParsedText"].strip()
 
 st.set_page_config(
     page_title="IngredientAI",
@@ -187,7 +213,7 @@ if uploaded_file:
 
             # -------- OCR -------- #
 
-            text = pytesseract.image_to_string(image)
+            text = extract_text_with_ocr_space(image)
             text = text.strip()
 
             if len(text) < 80:
