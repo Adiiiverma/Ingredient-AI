@@ -229,9 +229,9 @@ if uploaded_file:
           #  • Contains readable text\n
           #  """)
           #      st.stop()
-          #  st.subheader("Extracted Text")
+            st.subheader("Extracted Text")
 
-          #  st.text(text)
+            st.text(text)
 
             # -------- INGREDIENT LIST -------- #
 
@@ -295,6 +295,7 @@ if uploaded_file:
                 """, unsafe_allow_html=True)
 
         # -------- FINAL SCORE -------- #
+            overall = 0
 
             if total_weight > 0:
             
