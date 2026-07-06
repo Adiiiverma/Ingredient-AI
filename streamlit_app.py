@@ -1,9 +1,15 @@
 import streamlit as st
 import pandas as pd
 import os
+import pytesseract
+import platform
+
+if platform.system() == "Windows":
+    pytesseract.pytesseract.tesseract_cmd = (
+        r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+    )
 import json
-import requests
-import io
+
 from PIL import Image
 from reports.pdf_report import generate_pdf
 from utils.groq_ai import (
@@ -12,35 +18,6 @@ from utils.groq_ai import (
     analyze_ingredients_with_ai
 )
 from utils.database import IngredientDatabase
-
-def extract_text_with_ocr_space(image):
-    api_key = st.secrets["OCR_SPACE_API_KEY"]
-
-    img_bytes = io.BytesIO()
-    image.save(img_bytes, format="PNG")
-    img_bytes.seek(0)
-
-    response = requests.post(
-        "https://api.ocr.space/parse/image",
-        files={"filename": ("image.png", img_bytes, "image/png")},
-        data={
-            "apikey": api_key,
-            "language": "eng",
-            "isOverlayRequired": False,
-        },
-    )
-
-    result = response.json()
-
-    if result.get("IsErroredOnProcessing"):
-        return ""
-
-    parsed = result.get("ParsedResults")
-
-    if not parsed:
-        return ""
-
-    return parsed[0]["ParsedText"].strip()
 
 st.set_page_config(
     page_title="IngredientAI",
@@ -213,9 +190,8 @@ if uploaded_file:
 
             # -------- OCR -------- #
 
-            text = extract_text_with_ocr_space(image)
-            st.write("OCR Output")
-            st.text(text)
+            text = pytesseract.image_to_string(image)
+            
             text = text.strip()
 
           #  if len(text) < 80:
@@ -296,12 +272,11 @@ if uploaded_file:
 
         # -------- FINAL SCORE -------- #
             overall = 0
+            col1, col2, col3 = st.columns(3)
 
             if total_weight > 0:
             
                 overall = total_score / total_weight
-
-                col1, col2, col3 = st.columns(3)
 
             with col1:
                 st.metric("⭐ Health Score", f"{overall:.1f}/10")
